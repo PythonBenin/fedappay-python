@@ -13,7 +13,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 setup(
     name='fedapay',
     version='0.0.1',
-    packages=[p for p in find_packages('.', exclude=['tests'])],
+    packages=[p for p in find_packages('.', exclude=['tests*'])],
     include_package_data=True,
     license=LICENSE,
     description='FedaPay API Python Package',
