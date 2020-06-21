@@ -15,19 +15,16 @@ class FedaPayAPI:
         self._timeout = timeout
         self._token = None
 
-        self.User = resources.UserResource(self)
+        self.User = resources.UserResource(self)  # todo doesn't work with private_key like auth
         self.Transaction = resources.TransactionResource(self)
         self.Event = resources.EventResource(self)
         self.Customer = resources.CustomerResource(self)
-        self.Account = resources.AccountResource(self)
-        self.AccountSettings = resources.AccountSettingsResource(self)  # doesn't work
-        self.Settings = resources.SettingsResource(self)
-        self.Role = resources.RoleResource(self)
+        self.Account = resources.AccountResource(self)  # todo doesn't work with private_key like auth
+        self.AccountSettings = resources.AccountSettingsResource(self)  # todo doesn't work with private_key like auth
+        self.Settings = resources.SettingsResource(self)  # todo doesn't work with private_key like auth
+        self.Role = resources.RoleResource(self)  # todo doesn't work with private_key like auth
         self.Log = resources.LogResource(self)
-        self.Payout = resources.PayoutResource(self)
-
-    def set_token(self):
-        pass
+        self.Payout = resources.PayoutResource(self)  # doesn't work need custom authorization from Nautilus
 
     def _get_url(self, endpoint):
         url = f"https://api.fedapay.com"
