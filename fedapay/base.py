@@ -1,33 +1,48 @@
 from requests import request
 
-from fedapay.resources import UserResource, TransactionResource, CustomerResource, AccountResource, SettingsResource, RoleResource, LogResource
+from . import resources
 
 
-class BaseAPI:
-    version = '1'
+class FedaPayAPI:
+    _version = '1'
 
     def __init__(self, public_key, private_key, sandbox=False, version='1', verify_ssl=True, timeout=5):
-        self.sandbox = sandbox
-        self.public_key = public_key
-        self.private_key = private_key
-        self.verify_ssl = verify_ssl
-        self.version = f'v{version}'
-        self.timeout = timeout
+        self._sandbox = sandbox
+        self._public_key = public_key
+        self._private_key = private_key
+        self._verify_ssl = verify_ssl
+        self._version = f'v{version}'
+        self._timeout = timeout
+        self._token = None
+
+        self.User = resources.UserResource(self)
+        self.Transaction = resources.TransactionResource(self)
+        self.Event = resources.EventResource(self)
+        self.Customer = resources.CustomerResource(self)
+        self.Account = resources.AccountResource(self)
+        self.AccountSettings = resources.AccountSettingsResource(self)  # doesn't work
+        self.Settings = resources.SettingsResource(self)
+        self.Role = resources.RoleResource(self)
+        self.Log = resources.LogResource(self)
+        self.Payout = resources.PayoutResource(self)
+
+    def set_token(self):
+        pass
 
     def _get_url(self, endpoint):
         url = f"https://api.fedapay.com"
-        if self.sandbox:
+        if self._sandbox:
             url = "https://sandbox-api.fedapay.com"
 
         if endpoint.startswith('/'):
             endpoint = endpoint[1:]
 
-        return f'{url}/{self.version}/{endpoint}'
+        return f'{url}/{self._version}/{endpoint}'
 
     def _get_headers(self):
         headers = {
             "Accept": "application/json",
-            "Authorization": f"Bearer {self.private_key}"
+            "Authorization": f"Bearer {self._private_key}"
         }
 
         return headers
@@ -42,11 +57,11 @@ class BaseAPI:
         return request(
             method=method,
             url=url,
-            verify=self.verify_ssl,
+            verify=self._verify_ssl,
             auth=auth,
             params=params,
             data=data,
-            timeout=self.timeout,
+            timeout=self._timeout,
             headers=self._get_headers(),
             **kwargs
         )
@@ -70,15 +85,3 @@ class BaseAPI:
     def options(self, endpoint, **kwargs):
         """ OPTIONS requests """
         return self._request("OPTIONS", endpoint, None, **kwargs)
-
-
-class FedaPayAPI(BaseAPI):
-    def __init__(self, public_key, private_key, sandbox=False, version='1', verify_ssl=True, timeout=5):
-        super().__init__(public_key, private_key, sandbox, version, verify_ssl, timeout)
-        self.User = UserResource(self)
-        self.Transaction = TransactionResource(self)
-        self.Customer = CustomerResource(self)
-        self.Account = AccountResource(self)
-        self.Settings = SettingsResource(self)
-        self.Role = RoleResource(self)
-        self.Log = LogResource(self)

@@ -35,10 +35,6 @@ class AccountResource(AllMixin, CreateMixin, UpdateMixin, DeleteMixin, Resource)
         return self._base_api.put(f'{self._endpoint}/current/{object_id}', data=None, **kwargs)
 
 
-class AuthResource(Resource):
-    _endpoint = 'auth'
-
-
 class SettingsResource(AllMixin, Resource):
     _endpoint = 'settings'
 
@@ -53,3 +49,10 @@ class RoleResource(AllMixin, Resource):
 
 class LogResource(AllMixin, RetrieveMixin, Resource):
     _endpoint = 'logs'
+
+
+class PayoutResource(CreateMixin, RetrieveMixin, Resource):
+    _endpoint = 'payouts'
+
+    def schedule(self, data, **kwargs):
+        return self._base_api.post(f'{self._endpoint}/start', data, **kwargs)
